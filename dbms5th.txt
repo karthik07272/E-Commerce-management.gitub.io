@@ -1,0 +1,397 @@
+Enter password: ************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 18
+Server version: 8.0.21 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database library;
+ERROR 1007 (HY000): Can't create database 'library'; database exists
+mysql> create databases library;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'databases library' at line 1
+mysql> create databases library_1
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'databases library_1' at line 1
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| collage            |
+| company            |
+| company_033        |
+| information_schema |
+| library            |
+| moviedata          |
+| mysql              |
+| order_033          |
+| performance_schema |
+| sakila             |
+| sys                |
+| tables             |
+| world              |
++--------------------+
+13 rows in set (0.45 sec)
+
+mysql> use library;
+Database changed
+mysql> desc book;
+ERROR 1146 (42S02): Table 'library.book' doesn't exist
+mysql> create table publisher(name char(20) primary key,program_id varchar(20),phone_no varchar(20));
+ERROR 1050 (42S01): Table 'publisher' already exists
+mysql> desc publisher;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| name     | char(20)    | NO   | PRI | NULL    |       |
+| prog_id  | varchar(20) | YES  |     | NULL    |       |
+| phone_no | varchar(20) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> create table library_program(program_id varchar(20) primary key, program varchar(20), adress varchar(20));
+Query OK, 0 rows affected (0.55 sec)
+
+mysql> desc library_program;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| program_id | varchar(20) | NO   | PRI | NULL    |       |
+| program    | varchar(20) | YES  |     | NULL    |       |
+| adress     | varchar(20) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+3 rows in set (0.10 sec)
+
+mysql> create table book(book_id varchar(20) primary key, title varchar(20), publisher varchar(20),pub_year varchar(20));
+Query OK, 0 rows affected (1.45 sec)
+
+mysql> desc book;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| book_id   | varchar(20) | NO   | PRI | NULL    |       |
+| title     | varchar(20) | YES  |     | NULL    |       |
+| publisher | varchar(20) | YES  |     | NULL    |       |
+| pub_year  | varchar(20) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+4 rows in set (0.08 sec)
+
+mysql> create table book_authors(book_id varchar(20), author-name varchar(20),foreign key(book_id)references book(book_id));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-name varchar(20),foreign key(book_id)references book(book_id))' at line 1
+mysql> create table book_authors(book_id varchar(20), author_name varchar(20),foreign key(book_id) references book(book_id));
+Query OK, 0 rows affected (0.85 sec)
+
+mysql> desc book_author;
+ERROR 1146 (42S02): Table 'library.book_author' doesn't exist
+mysql> desc book_authors;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| book_id     | varchar(20) | YES  | MUL | NULL    |       |
+| author_name | varchar(20) | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+2 rows in set (0.15 sec)
+
+mysql> create table book_copies(book_id varchar(20),program_id varchar(20),primary key(book_id,program_id), no_of_copies int,foreign key (program_id)references library_program(program_id)on delete cascade);
+Query OK, 0 rows affected (0.90 sec)
+
+mysql> desc book_copies;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| book_id      | varchar(20) | NO   | PRI | NULL    |       |
+| program_id   | varchar(20) | NO   | PRI | NULL    |       |
+| no_of_copies | int         | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+3 rows in set (0.27 sec)
+
+mysql> create table book_lending(book_id varchar(20),program_id varchar(20),card_no varchar(20), date_out date,due_date date,primary key(book_id,program_id,card_no),foreign key(book_id)references book(book_id),foreign key (program_id) references library_program(program_id) on delete cascade);
+Query OK, 0 rows affected (0.80 sec)
+
+mysql> desc book_lending;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| book_id    | varchar(20) | NO   | PRI | NULL    |       |
+| program_id | varchar(20) | NO   | PRI | NULL    |       |
+| card_no    | varchar(20) | NO   | PRI | NULL    |       |
+| date_out   | date        | YES  |     | NULL    |       |
+| due_date   | date        | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+5 rows in set (0.24 sec)
+
+mysql> insert into book values('ab001','unix','arun','20/12/1999');
+Query OK, 1 row affected (0.13 sec)
+
+mysql> insert into book values('ab002','management','vrun','12/11/2000');
+Query OK, 1 row affected (0.13 sec)
+
+mysql> insert into book values('ab004','adp','kiran','13/10/2001');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into book values('ab005','atc','ramraj','16/09/2002');
+Query OK, 1 row affected (0.11 sec)
+
+mysql> insert into book values('ab006','cns','ananth','18/08/2005');
+Query OK, 1 row affected (0.10 sec)
+
+mysql> insert into book_authors values('ab004','vankatraj');
+Query OK, 1 row affected (0.19 sec)
+
+mysql> insert into book_authors values('ab002','kanthraj');
+Query OK, 1 row affected (0.12 sec)
+
+mysql> insert into book_authors values('ab001','ajayraj');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into book_authors values('ab006','prasannakumar');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into book_authors values('ab003','sumith');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_authors`, CONSTRAINT `book_authors_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `book` (`book_id`))
+mysql> insert into book_authors values('ab005','sumith');
+Query OK, 1 row affected (0.17 sec)
+
+mysql> insert into publisher values('ramraj','dcd009','9663010247');
+Query OK, 1 row affected (0.14 sec)
+
+mysql> insert into publisher values('manukumar','dcd008','9883010247');
+Query OK, 1 row affected (0.11 sec)
+
+mysql> insert into publisher values('varun','dcd007','9443010247');
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into publisher values('kiran','dcd006','9553010247');
+Query OK, 1 row affected (0.12 sec)
+
+mysql> insert into publisher values('arun','dcd005','9433010247');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> select * from publisher;
++-----------+---------+------------+
+| name      | prog_id | phone_no   |
++-----------+---------+------------+
+| arun      | dcd005  | 9433010247 |
+| kiran     | dcd006  | 9553010247 |
+| manukumar | dcd008  | 9883010247 |
+| ramraj    | dcd009  | 9663010247 |
+| varun     | dcd007  | 9443010247 |
++-----------+---------+------------+
+5 rows in set (0.03 sec)
+
+mysql> insert into book_copies('ab006','cd001',10);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''ab006','cd001',10)' at line 1
+mysql> insert into book_copies('ab006','cd001','10');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''ab006','cd001','10')' at line 1
+mysql> insert into book_copies values('ab006','cd001','10');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_copies`, CONSTRAINT `book_copies_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `library_program` (`program_id`) ON DELETE CASCADE)
+mysql> insert into book_copies values('ab006','cd001',10);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_copies`, CONSTRAINT `book_copies_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `library_program` (`program_id`) ON DELETE CASCADE)
+mysql> insert into library_program values('ab006','cd001',10);
+Query OK, 1 row affected (0.30 sec)
+
+mysql> insert into library_program values('ab005','cd002',11);
+Query OK, 1 row affected (0.12 sec)
+
+mysql> insert into library_program values('ab004','cd003',12);
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into library_program values('ab002','cd004',13);
+Query OK, 1 row affected (0.11 sec)
+
+mysql> insert into library_program values('ab001','cd005',12);
+Query OK, 1 row affected (0.08 sec)
+
+mysql> select * from library_program;
++------------+---------+--------+
+| program_id | program | adress |
++------------+---------+--------+
+| ab001      | cd005   | 12     |
+| ab002      | cd004   | 13     |
+| ab004      | cd003   | 12     |
+| ab005      | cd002   | 11     |
+| ab006      | cd001   | 10     |
++------------+---------+--------+
+5 rows in set (0.00 sec)
+
+mysql> delete * from library_program;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '* from library_program' at line 1
+mysql>
+mysql> drop table library_program;
+ERROR 3730 (HY000): Cannot drop table 'library_program' referenced by a foreign key constraint 'book_copies_ibfk_1' on table 'book_copies'.
+mysql> insert into book_copies values('ab001','ab004',4);
+Query OK, 1 row affected (0.09 sec)
+
+mysql> insert into book_copies values('ab006','ab005',5);
+Query OK, 1 row affected (0.15 sec)
+
+mysql> insert into book_copies values('ab004','ab0010',6);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_copies`, CONSTRAINT `book_copies_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `library_program` (`program_id`) ON DELETE CASCADE)
+mysql> insert into book_copies values('ab004','ab002',6);
+Query OK, 1 row affected (0.04 sec)
+
+mysql> insert into book_copies values('ab0010','ab001',7);
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into book_copies values('ab0011','ab006',8);
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into book_copies values('ab002','ab004',2);
+Query OK, 1 row affected (0.11 sec)
+
+mysql> insert into book_lending('ab001','^C
+mysql> ^C
+mysql> select * from book_copies;
++---------+------------+--------------+
+| book_id | program_id | no_of_copies |
++---------+------------+--------------+
+| ab001   | ab004      |            4 |
+| ab0010  | ab001      |            7 |
+| ab0011  | ab006      |            8 |
+| ab002   | ab004      |            2 |
+| ab004   | ab002      |            6 |
+| ab006   | ab005      |            5 |
++---------+------------+--------------+
+6 rows in set (0.00 sec)
+
+mysql> insert into book_lending;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> insert into book_lending values('ab0011','ab006','mk12','18/12/2019','29/12/2019');
+ERROR 1292 (22007): Incorrect date value: '18/12/2019' for column 'date_out' at row 1
+mysql> insert into book_lending values('ab0011','ab006','mk12','18/11/2019','29/12/2019');
+ERROR 1292 (22007): Incorrect date value: '18/11/2019' for column 'date_out' at row 1
+mysql> insert into book_lending values('ab0011','ab006','mk12',18/11/2019,29/12/2019);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_lending`, CONSTRAINT `book_lending_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `book` (`book_id`))
+mysql> insert into book_lending values('ab001','ab006','mk12','18/11/2019','29/12/2019');
+ERROR 1292 (22007): Incorrect date value: '18/11/2019' for column 'date_out' at row 1
+mysql> insert into book_lending values('ab001','ab006','mk12','18-12-2019','29-12-2019');
+ERROR 1292 (22007): Incorrect date value: '18-12-2019' for column 'date_out' at row 1
+mysql> insert into book_lending values('ab001','ab006','mk12','2019-12-18','2019-12-29');
+Query OK, 1 row affected (0.16 sec)
+
+mysql> insert into book_lending values('ab0011','ab005','mk13','2019-12-10','2019-12-25');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_lending`, CONSTRAINT `book_lending_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `book` (`book_id`))
+mysql> insert into book_lending values('ab0011','ab004','mk13','2019-12-10','2019-12-25');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_lending`, CONSTRAINT `book_lending_ibfk_1` FOREIGN KEY (`book_id`) REFERENCES `book` (`book_id`))
+mysql> insert into book_lending values('ab006','ab004','mk13','2019-12-10','2019-12-25');
+Query OK, 1 row affected (0.11 sec)
+
+mysql> insert into book_lending values('ab006','ab003','mk14','2019-11-08','2019-11-21');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_lending`, CONSTRAINT `book_lending_ibfk_2` FOREIGN KEY (`program_id`) REFERENCES `library_program` (`program_id`) ON DELETE CASCADE)
+mysql> insert into book_lending values('ab004','ab003','mk14','2019-11-08','2019-11-21');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_lending`, CONSTRAINT `book_lending_ibfk_2` FOREIGN KEY (`program_id`) REFERENCES `library_program` (`program_id`) ON DELETE CASCADE)
+mysql> insert into book_lending values('ab002','ab003','mk14','2019-11-08','2019-11-21');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`library`.`book_lending`, CONSTRAINT `book_lending_ibfk_2` FOREIGN KEY (`program_id`) REFERENCES `library_program` (`program_id`) ON DELETE CASCADE)
+mysql> insert into book_lending values('ab004','ab002','mk14','2019-11-08','2019-11-21');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> insert into book_lending values('ab005','ab001','mk15','2019-11-12','2019-11-28');
+Query OK, 1 row affected (0.12 sec)
+
+mysql> insert into book_lending values('ab004','ab002','mk16','2019-10-01','2019-10-15');
+Query OK, 1 row affected (0.09 sec)
+
+mysql> select * from book_lending;
++---------+------------+---------+------------+------------+
+| book_id | program_id | card_no | date_out   | due_date   |
++---------+------------+---------+------------+------------+
+| ab001   | ab006      | mk12    | 2019-12-18 | 2019-12-29 |
+| ab004   | ab002      | mk14    | 2019-11-08 | 2019-11-21 |
+| ab004   | ab002      | mk16    | 2019-10-01 | 2019-10-15 |
+| ab005   | ab001      | mk15    | 2019-11-12 | 2019-11-28 |
+| ab006   | ab004      | mk13    | 2019-12-10 | 2019-12-25 |
++---------+------------+---------+------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select b.book_id,b.title,b.publisher,a.author_name,c.no_of_copies,lp.program_id from book b,book_authors a,book_copies c,library_program lp where b.book_id=a.book_id and b.book_id=c.book_id and c.program_id=lp.program_id;
++---------+------------+-----------+---------------+--------------+------------+
+| book_id | title      | publisher | author_name   | no_of_copies | program_id |
++---------+------------+-----------+---------------+--------------+------------+
+| ab001   | unix       | arun      | ajayraj       |            4 | ab004      |
+| ab002   | management | vrun      | kanthraj      |            2 | ab004      |
+| ab004   | adp        | kiran     | vankatraj     |            6 | ab002      |
+| ab006   | cns        | ananth    | prasannakumar |            5 | ab005      |
++---------+------------+-----------+---------------+--------------+------------+
+4 rows in set (0.08 sec)
+
+mysql> select card_no from book_lending where date_out between '2017-01-01' and '2017-07-01' group by card_no having count(*)>3;
+Empty set (0.04 sec)
+
+mysql> insert into book_lending values('ab004','ab002','mk16','2017-01-01','2017-01-15');
+ERROR 1062 (23000): Duplicate entry 'ab004-ab002-mk16' for key 'book_lending.PRIMARY'
+mysql> insert into book_lending values('ab004','ab001','mk16','2017-01-01','2017-01-15');
+Query OK, 1 row affected (0.17 sec)
+
+mysql> insert into book_lending values('ab005','ab001','mk16','2017-02-10','2017-02-25');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into book_lending values('ab005','ab002','mk17','2017-03-01','2017-03-15');
+Query OK, 1 row affected (0.11 sec)
+
+mysql> insert into book_lending values('ab005','ab002','mk17','2017-06-20','2017-07-01');
+ERROR 1062 (23000): Duplicate entry 'ab005-ab002-mk17' for key 'book_lending.PRIMARY'
+mysql> insert into book_lending values('ab005','ab004','mk18','2017-06-20','2017-07-01');
+Query OK, 1 row affected (0.14 sec)
+
+mysql> select card_no from book_lending where date_out between '2017-01-01' and '2017-07-01' group by card_no having count(*)>3;
+Empty set (0.00 sec)
+
+mysql> select * from book_lending;
++---------+------------+---------+------------+------------+
+| book_id | program_id | card_no | date_out   | due_date   |
++---------+------------+---------+------------+------------+
+| ab001   | ab006      | mk12    | 2019-12-18 | 2019-12-29 |
+| ab004   | ab001      | mk16    | 2017-01-01 | 2017-01-15 |
+| ab004   | ab002      | mk14    | 2019-11-08 | 2019-11-21 |
+| ab004   | ab002      | mk16    | 2019-10-01 | 2019-10-15 |
+| ab005   | ab001      | mk15    | 2019-11-12 | 2019-11-28 |
+| ab005   | ab001      | mk16    | 2017-02-10 | 2017-02-25 |
+| ab005   | ab002      | mk17    | 2017-03-01 | 2017-03-15 |
+| ab005   | ab004      | mk18    | 2017-06-20 | 2017-07-01 |
+| ab006   | ab004      | mk13    | 2019-12-10 | 2019-12-25 |
++---------+------------+---------+------------+------------+
+9 rows in set (0.00 sec)
+
+mysql> select card_no from book_lending where date_out between '2017-01-01' and '2017-07-01' group by card_no having count(*)>3;
+Empty set (0.00 sec)
+
+mysql> insert into book_lending values('ab001','ab004','mk18','2017-06-20','2017-07-01');
+Query OK, 1 row affected (0.09 sec)
+
+mysql> select card_no from book_lending where date_out between '2017-01-01' and '2017-07-01' group by card_no having count(*)>3;
+Empty set (0.00 sec)
+
+mysql> insert into book_lending values('ab001','ab004','mk18','2017-06-20','2017-07-01');
+ERROR 1062 (23000): Duplicate entry 'ab001-ab004-mk18' for key 'book_lending.PRIMARY'
+mysql> insert into book_lending values('ab002','ab004','mk18','2017-05-20','2017-05-01');
+Query OK, 1 row affected (0.11 sec)
+
+mysql> insert into book_lending values('ab002','ab005','mk18','2017-04-20','2017-04-01');
+Query OK, 1 row affected (0.07 sec)
+
+mysql> insert into book_lending values('ab001','ab005','mk18','2017-03-20','2017-03-01');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> insert into book_lending values('ab002','ab005','mk18','2017-05-20','2017-05-01');
+ERROR 1062 (23000): Duplicate entry 'ab002-ab005-mk18' for key 'book_lending.PRIMARY'
+mysql> insert into book_lending values('ab006','ab005','mk18','2017-05-20','2017-05-01');
+Query OK, 1 row affected (0.10 sec)
+
+mysql> insert into book_lending values('ab004','ab005','mk18','2017-06-20','2017-06-01');
+Query OK, 1 row affected (0.07 sec)
+
+mysql> select card_no from book_lending where date_out between '2017-01-01' and '2017-07-01' group by card_no having count(*)>3;
++---------+
+| card_no |
++---------+
+| mk18    |
++---------+
+1 row in set (0.00 sec)
+
+mysql> ^C
+mysql>
